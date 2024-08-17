@@ -55,7 +55,7 @@ void Game::destroy() {
 }
 
 void Game::setup() {
-	map->loadMap();
+	map->loadMap("./assets/test.map");
 }
 
 void Game::update() {}

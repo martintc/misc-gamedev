@@ -29,7 +29,7 @@ class Map {
  public:
 	Map() = default;
 	~Map() = default;
-	int loadMap();
+	int loadMap(std::string path);
 	void addWall(Wall wall);
 	void renderMap(std::unique_ptr<Graphics> &graphics);
 };
