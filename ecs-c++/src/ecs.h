@@ -161,6 +161,7 @@ private:
 	std::vector<Signature> entitySignatures;
 	std::deque<unsigned int> freeEntities;
 	std::vector<std::shared_ptr<IComponentPool>> componentPools;
+	std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
 
 public:
 	Registry() = default;
@@ -264,22 +265,28 @@ public:
 	***********************/
 	template <typename TSystem, typename ...TArgs>
 	void addSystem(TArgs&& ...args) {
-		
+		// TODO args
+		const auto id = std::type_index(typeid(TSystem));
+		std::shared_ptr<TSystem> system = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
+		systems.insert({ id, system });
 	}
 
 	template <typename TSystem>
 	void removeSystem() {
-		
+		const auto system = systems.find(std::type_index(typeid(TSystem)));
+		systems.erase(system);
 	}
 
 	template <typename TSystem>
 	bool hasSystem() const {
-		
+		return systems.count(std::type_index(typeid(TSystem)));
 	}
 
 	template <typename TSystem>
 	TSystem& getSystem() const {
-		
+		const auto id = std::type_index(typeid(TSystem));
+		const auto system = systems.find(id);
+		return system;
 	}
 	
 	

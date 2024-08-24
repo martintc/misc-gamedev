@@ -1,5 +1,6 @@
 #include "ecs.h"
 #include "components.h"
+#include "systems.h"
 #include "logger.h"
 #include <memory>
 #include <bitset>
@@ -87,6 +88,12 @@ void systemEntityTest() {
 	Logger::info("Completed System Entity Test");
 }
 
+void systemRegistryTests() {
+	Logger::info("Performing System Registry Tests");
+
+	Logger::info("Completed System Registry Test");
+}
+
 int main(int argc, char* argv[]) {
 	Logger::info("Starting program.");
 	Logger::info("");
@@ -98,6 +105,9 @@ int main(int argc, char* argv[]) {
 	entityComponentTests();
 	Logger::info("");
 	systemEntityTest();
+	Logger::info("");
+	systemRegistryTests();
+	
 	
 	Logger::info("");
 	Logger::info("Ending program.");
