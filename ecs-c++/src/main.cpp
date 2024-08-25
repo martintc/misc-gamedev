@@ -59,6 +59,10 @@ void entityComponentTests() {
 	Logger::info(std::to_string(entity.getId()) + " : " + (result ? "true" : "false"));
 	result = registry->hasComponent<TestComponent>(entity2);
 	Logger::info(std::to_string(entity2.getId()) + " : " + (result ? "true" : "false"));
+
+	auto component = registry->getComponent<TestComponent>(entity);
+	Logger::info("Getting Test Component for Entity with id " + std::to_string(entity.getId()));
+	Logger::info("x property for test component is " + std::to_string(component.x));
 	
 	Logger::info("Entity Component Tests complete");
 }
@@ -91,6 +95,27 @@ void systemEntityTest() {
 void systemRegistryTests() {
 	Logger::info("Performing System Registry Tests");
 
+	std::unique_ptr<Registry> registry = std::make_unique<Registry>();
+
+	registry->addSystem<TestSystem>();
+	Logger::info("Registered a test system");
+
+	registry->getSystem<TestSystem>().Update();
+	Logger::info("Tested update on Test system with no entities");
+
+	Entity entityA = registry->createEntity();
+	auto transformComponentA = TransformComponent(0, 0);
+	registry->addComponent<TransformComponent>(entityA, transformComponentA);
+
+	registry->addEntityToSystem<TestSystem>(entityA);
+	Logger::info("Added entity A to Test System");
+
+	registry->getSystem<TestSystem>().Update();
+	Logger::info("Ran Test System update");
+
+	transformComponentA = registry->getComponent<TransformComponent>(entityA);
+	Logger::info("Transform component for entityA has x at " + std::to_string(transformComponentA.x));
+	
 	Logger::info("Completed System Registry Test");
 }
 

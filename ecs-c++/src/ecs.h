@@ -104,11 +104,11 @@ class ComponentPool: public IComponentPool {
 
 	T& get(Entity entity) {
 		// return static_cast<T&>(data[index]);
-		return static_cast<T&>(data[entity]);
+		return static_cast<T&>(data[entity.getId()]);
 	}
 
 	T& operator [](unsigned int index) {
-		return data.at(index);
+		return data[index];
 	}
 };
 
@@ -124,6 +124,7 @@ private:
 public:
 	System() = default;
 	~System() = default;
+	class Registry* registry;
 	
 	void addEntityToSystem(Entity entity) {
 		entities.push_back(entity);
@@ -260,6 +261,14 @@ public:
 		return entitySignatures[entityId].test(componentId);
 	}
 
+	template <typename TComponent>
+	TComponent& getComponent(Entity entity) {
+		const auto entityId = entity.getId();
+		const auto componentId = Component<TComponent>::getId();
+		auto pool = std::static_pointer_cast<ComponentPool<TComponent>>(componentPools[componentId]);
+		return pool->get(entityId);
+	}
+
 	/***********************
 	 ** System management
 	***********************/
@@ -268,6 +277,7 @@ public:
 		// TODO args
 		const auto id = std::type_index(typeid(TSystem));
 		std::shared_ptr<TSystem> system = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
+		system->registry = this;
 		systems.insert({ id, system });
 	}
 
@@ -286,8 +296,18 @@ public:
 	TSystem& getSystem() const {
 		const auto id = std::type_index(typeid(TSystem));
 		const auto system = systems.find(id);
-		return system;
+		return *(std::static_pointer_cast<TSystem>(system->second));
 	}
-	
-	
+
+	template <typename TSystem>
+	void addEntityToSystem(Entity entity) {
+		const auto system = systems.find(std::type_index(typeid(TSystem)))->second;
+		system->addEntityToSystem(entity);
+	}
+
+	template <typename TSystem>
+	void removeEntityFromSystem(Entity entity) {
+		const auto system = systems.find(std::type_index(typeid(TSystem)))->second;
+		system->removeEntityFromSystem(entity);
+	}
 };

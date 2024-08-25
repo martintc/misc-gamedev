@@ -12,7 +12,11 @@ class TestSystem: public System {
 
 	void Update() {
 		for (auto entity : getEntities()) {
-			
+			const auto entityId = entity.getId();
+			auto& transform = registry->getComponent<TransformComponent>(entity);
+
+			transform.x += 1;
+			transform.y += 1;
 		}
 	}
 };
