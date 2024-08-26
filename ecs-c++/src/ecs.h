@@ -29,10 +29,6 @@ public:
 	Entity(int id) {
 		this->id = id;
 	}
-
-	void Kill() {
-		// TODO
-	}
 	
 	int getId() const {
 		return id;
@@ -172,6 +168,23 @@ public:
 	void update() {
 		// TODO
 		// Add Entity to relevant system
+
+		// remove entity from systems
+		for (auto entity : entitiesToRemove) {
+			const auto entityId = entity.getId();
+
+			// remove from systems
+			for (auto system : systems) {
+				system.second->removeEntityFromSystem(entity);
+			}
+			
+			// reset signature
+			entitySignatures[entityId].reset();
+
+			// make id available
+			freeEntities.push_back(entityId);
+			
+		}
 	}
 
   /***********************
@@ -183,6 +196,7 @@ public:
 		if (freeEntities.size() > 0) {
 			entityId = freeEntities.front();
 			freeEntities.pop_front();
+			entityCount += 1;
 		} else {
 			entityId = entityCount;
 			entityCount += 1;
@@ -202,7 +216,7 @@ public:
 	}
 
 	void destroyEntity(Entity entity) {
-		// TODO
+	  entitiesToRemove.insert(entity);
 	}
 
 	/***********************
