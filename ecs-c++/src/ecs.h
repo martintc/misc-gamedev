@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <bitset>
 #include <cstdint>
 #include <memory>
@@ -131,7 +132,7 @@ public:
 	}
 	
 	void removeEntityFromSystem(Entity entity) {
-		entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+	  entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
 	}
 	
 	std::vector<Entity> getEntities() const {
